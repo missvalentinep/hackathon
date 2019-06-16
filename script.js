@@ -8,6 +8,10 @@ let factories = [];
 let polygons = [];
 let sortingCenters = [];
 let storages = [];
+let showOnMap;
+let previousMarker;
+let socket;
+let map;
 
 const updateDate = () => {
     let today = new Date();
@@ -28,17 +32,12 @@ setInterval(updateDate, 1000);
 DG.then(() => {
 
 
-    let map = DG.map('map', {
+    map = DG.map('map', {
         center: [58.530355, 31.240477],
         zoom: 13
     });
 
     console.log(map);
-
-    let carIcon = DG.icon({
-        iconUrl: '/Users/valentina/Documents/hahaton/img/trashCar.png',
-        iconSize: [40, 40]
-    });
 
     let carIconReversed = DG.icon({
         iconUrl: '/Users/valentina/Documents/hahaton/img/trashCarReversed.png',
@@ -51,21 +50,6 @@ DG.then(() => {
         iconSize: [30, 30]
     });
 
-
-    let recycleBinFullIcon = DG.icon({
-        iconUrl: '/Users/valentina/Documents/hahaton/img/recycleBinFull.png',
-        iconSize: [30, 30]
-    });
-
-    let recycleBinEmptyIcon = DG.icon({
-        iconUrl: '/Users/valentina/Documents/hahaton/img/recycleBin.png',
-        iconSize: [30, 30]
-    });
-
-    let carIconGreen = DG.icon({
-        iconUrl: '/Users/valentina/Documents/hahaton/img/trashCarGreen.png',
-        iconSize: [40, 40]
-    });
 
     let binGlassIcon = DG.icon({
         iconUrl: '/Users/valentina/Documents/hahaton/img/binGlass.png',
@@ -117,6 +101,11 @@ DG.then(() => {
         iconUrl: '/Users/valentina/Documents/hahaton/img/storage.png',
         iconSize: [30, 30]
     });
+
+    let requestIcon = DG.icon({
+        iconUrl: '/Users/valentina/Documents/hahaton/img/request.png',
+        iconSize: [20, 30]
+    });
     // icons = {map, carIcon, carIcon, }
 
 
@@ -145,22 +134,22 @@ DG.then(() => {
     //----------Полигоны------------
 
     //http://clevereco.ru/groro/novgorodskaja-oblast?sort=type
-    DG.marker([58.598, 31.2966], {
-        icon: factoryIcon
-    }).addTo(map).bindLabel('Полигон твердых бытовых и подобных им промышленных отходов ПАО «Акрон»');
-
-    DG.marker([58.41, 31.74], {
-        icon: factoryIcon
-    }).addTo(map).bindLabel('Захоронение ООО "Управляющая компания "Вече"');
-
-    DG.marker([58.63, 30.26], {
-        icon: factoryIcon
-    }).addTo(map).bindLabel('Полигон складирования хозяйственно-бытовых отходов п. Батецкий Новгородской области');
-
-    DG.marker([58.586991, 31.225377], {
-        icon: factoryIcon
-    }).addTo(map).bindLabel('Тестовый полигон');
-
+    // DG.marker([58.598, 31.2966], {
+    //     icon: factoryIcon
+    // }).addTo(map).bindLabel('Полигон твердых бытовых и подобных им промышленных отходов ПАО «Акрон»');
+    //
+    // DG.marker([58.41, 31.74], {
+    //     icon: factoryIcon
+    // }).addTo(map).bindLabel('Захоронение ООО "Управляющая компания "Вече"');
+    //
+    // DG.marker([58.63, 30.26], {
+    //     icon: factoryIcon
+    // }).addTo(map).bindLabel('Полигон складирования хозяйственно-бытовых отходов п. Батецкий Новгородской области');
+    //
+    // DG.marker([58.586991, 31.225377], {
+    //     icon: factoryIcon
+    // }).addTo(map).bindLabel('Тестовый полигон');
+    //
 
     //-----------------------------
 
@@ -216,10 +205,9 @@ DG.then(() => {
     //----------Communication with server------------
 
 
-    let socket = new WebSocket("ws://10.1.40.210:6060");
+    socket = new WebSocket("ws://10.1.40.210:6060");
     socket.onopen = () => {
         console.log("Соединение установлено.");
-        socket.send("test");
     };
 
     socket.onclose = event => {
@@ -233,7 +221,7 @@ DG.then(() => {
     socket.onmessage = event => {
         // console.log("Получены данные " + event.data);
         let data = JSON.parse(event.data);
-        // console.log(data.type);
+        console.log(data);
         switch (data.type) {
             case "cars":
                 move(car1, data.content);
@@ -241,8 +229,11 @@ DG.then(() => {
             case "facility":
                 initEnvironment(data.content);
                 break;
+            case "update":
+                updateRequests(data.content);
+                break;
         }
-        
+
     };
 
     socket.onerror = error => {
@@ -257,15 +248,18 @@ DG.then(() => {
             console.log('load');
             containers.forEach(bin => {
                 if (bin.getLatLng().lat === data.x && bin.getLatLng().lng === data.y) {
-                    bin.setIcon(recycleBinEmptyIcon);
+                    bin.setIcon(binEmptyIcon);
                 }
             });
         }
     };
 
+
+
     const initEnvironment = (data) => {
+
         data['containers'].map(container => {
-            console.log(container);
+
             let iconSrc;
             let label;
 
@@ -275,7 +269,6 @@ DG.then(() => {
                     label = "Контейнер для стекла";
                     break;
                 case "plastic":
-
                     iconSrc = binPlasticIcon;
                     label = "Контейнер для пластика";
                     break;
@@ -340,7 +333,43 @@ DG.then(() => {
             factories.push(factoryMarker);
         });
 
+        let requestsHtml = "";
+        data['requests'].map(request => {
+            console.log(request);
+            let requestType = request.type === 'sell' ? "Покупка" : "Продажа";
+            requestsHtml += "<div class='request'>" +
+                "<h2>" + requestType + "</h2>" +
+                "<p>" + request.trash + " за " + request.price + " р/кг</p>" +
+                "<p>" + request.shipping + "</p>" +
+                "<a href='#' onclick='showOnMap([" + request.x + "," + request.y + "])'>Посмотреть на карте</a>" +
+                "</div>";
+        });
 
+        document.getElementById('requests').innerHTML = requestsHtml;
+    };
+
+    const updateRequests = (data) => {
+        let requestsHtml = "";
+        data['requests'].map(request => {
+            console.log(request);
+            let requestType = request.type === 'sell' ? "Покупка" : "Продажа";
+            requestsHtml += "<div class='request'>" +
+                "<h2>" + requestType + "</h2>" +
+                "<p>" + request.trash + " за " + request.price + " р/кг</p>" +
+                "<p>" + request.shipping + "</p>" +
+                "<a href='#' onclick='showOnMap([" + request.x + "," + request.y + "])'>Посмотреть на карте</a>" +
+                "</div>";
+        });
+
+        document.getElementById('requests').innerHTML = requestsHtml;
+    };
+
+    showOnMap = cordsArr => {
+        if (previousMarker !== undefined) previousMarker.removeFrom(map);
+        previousMarker = DG.marker([cordsArr[0], cordsArr[1]], {
+            icon: requestIcon
+        }).addTo(map);
+        map.setView([cordsArr[0], cordsArr[1]]);
     }
 });
 
@@ -356,6 +385,35 @@ let hideSideMenu = () => {
         sideMenu.classList.add("closed");
 
     }
+};
 
+let submitRequest = () => {
 
+    let types = document.getElementsByName('whatYouWant');
+    let type;
+    if (types[0].checked) {
+        type = types[0].value;
+    }
+    else {
+        type = types[1].value;
+    }
+    let trash = document.getElementById('chooseMaterial').value;
+    let price = document.getElementById('choosePrice').value;
+    let shippingTypes = document.getElementsByName('delivery');
+    let shipping;
+    if (shippingTypes[0].checked) {
+        shipping = shippingTypes[0].value;
+    }
+    else {
+        shipping = shippingTypes[1].value;
+    }
+    let x = userMarker.getLatLng().lat;
+    let y = userMarker.getLatLng().lng;
+    // userMarker.removeFrom(map);
+
+    let obj = {type, trash, price, shipping, x, y};
+
+    socket.send(JSON.stringify(obj));
+    sideMenu.innerHTML = "<h1>Завявка успешно отправлена!</h1> <p>Мы с вами свяжемся</p>";
+    setTimeout(hideSideMenu, 1000);
 };

@@ -23,7 +23,7 @@
 .open {
     margin-left: 0 !important;
     animation-name: slideIn;
-    animation-duration: 2s;
+    animation-duration: 1s;
 }
 
 .closed {
@@ -40,6 +40,25 @@
     margin-right: 30px;
 }
 
+.info img{
+    width: 600px;
+    margin: 20px auto;
+}
+
+.info h1{
+    text-align: center;
+}
+
+#requests {
+    display: flex;
+    justify-content: space-around;
+}
+
+.request {
+    padding: 30px;
+    box-shadow: 6px 2px 10px grey;
+    width: 30%;
+}
 
 .form-check-inline {
     margin-bottom: 10px;

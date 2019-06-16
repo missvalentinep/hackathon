@@ -29,7 +29,7 @@
             <li><a class="nav-item nav-link active" href="#" onclick="hideSideMenu()">Главная<span class="sr-only">(current)</span></a>
             </li>
             <li><a class="nav-item nav-link" href="#" onclick="showSideMenu()">Оставить заявку</a></li>
-            <li><a class="nav-item nav-link" href="#">О нас</a></li>
+            <li><a class="nav-item nav-link" href="#orders">Заказы</a></li>
 
 
 
@@ -43,7 +43,7 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dateTimeLink" id="carInfo">
                     <a class="dropdown-item carInfo" href="#">Машина 1: СКЛАД через 15 минут</a>
-                    <a class="dropdown-item carInfo" href="#">Машина 2: ПОЛИГОН ТБО через 2 часа</a>
+
                     <a class="dropdown-item carInfo" href="#"></a>
 
                 </div>
@@ -55,7 +55,7 @@
 <div class="content">
     <div id="leaveRequest">
         <h1>Оставьте заявку!</h1>
-        <form>
+        <form onsubmit="event.preventDefault();">
             <label>Вы хотите...</label> <br>
             <div class=" form-check-inline">
                 <input class="form-check-input" type="radio" name="whatYouWant" id="wantToBuy" value="buy" checked>
@@ -80,18 +80,26 @@
 
             <label>Выберите способ доставки...</label> <br>
             <div class=" form-check-inline">
-                <input class="form-check-input" type="radio" name="delivery" id="take" value="take" checked>
+                <input class="form-check-input" type="radio" name="delivery" id="take" value="Самовывоз" checked>
                 <label class="form-check-label" for="take">Самовывоз </label>
-                <input class="form-check-input" type="radio" name="delivery" id="deliver" value="deliver" >
+                <input class="form-check-input" type="radio" name="delivery" id="deliver" value="Доставка" >
                 <label class="form-check-label" for="deliver">Доставка </label>
             </div>
             <br>
             <a href="#" onclick="addUserMarker();">Выберите точку на карте</a>
 
-            <button type="submit" class="btn btn-success">Оставить заявку</button>
+            <button class="btn btn-success" onclick="submitRequest();">Оставить заявку</button>
         </form>
     </div>
     <div id="map"></div>
+
+</div>
+<div class="container info" id="orders">
+    <h1>Заказы</h1>
+    <div id="requests">
+
+    </div>
+    <!--<img src="./img/logoBig.jpg" width="600px">-->
 </div>
 
 <script src="script.js"></script>
