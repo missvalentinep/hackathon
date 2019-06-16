@@ -7,18 +7,27 @@
     height: 500px;
 }
 
-#sideMenu {
-
-    width: 40%;
+#leaveRequest {
+    position: absolute;
+    z-index: 1;
+    background: honeydew;
+    width: 400px;
     margin-left: -100%;
+    padding: 30px;
+    height: 100%;
 }
 
+#leaveRequest .btn{
+    margin-top: 30px;
+}
 .open {
+    margin-left: 0 !important;
     animation-name: slideIn;
     animation-duration: 2s;
 }
 
-.close {
+.closed {
+    margin-left: -100% !important;
     animation-name: slideOut;
     animation-duration: 2s;
 }
@@ -27,7 +36,14 @@
     display: flex;
 }
 
+.form-check-label {
+    margin-right: 30px;
+}
 
+
+.form-check-inline {
+    margin-bottom: 10px;
+}
 @keyframes slideIn {
     from {
         margin-left: -100%;

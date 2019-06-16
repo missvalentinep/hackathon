@@ -26,17 +26,19 @@
             <li><a class="navbar-brand" href="#">
                 <img src="./img/logo.png" height="30" alt="">
             </a></li>
-            <li><a class="nav-item nav-link active" href="./index.html">Главная<span class="sr-only">(current)</span></a></li>
-            <li><a class="nav-item nav-link" href="#">Оставить заявку</a></li>
-            <li><a class="nav-item nav-link" href="#">Склад</a></li>
-            <li><a class="nav-item nav-link" href="#">Торги</a></li>
+            <li><a class="nav-item nav-link active" href="#" onclick="hideSideMenu()">Главная<span class="sr-only">(current)</span></a>
+            </li>
+            <li><a class="nav-item nav-link" href="#" onclick="showSideMenu()">Оставить заявку</a></li>
+            <li><a class="nav-item nav-link" href="#">О нас</a></li>
+
 
 
         </ul>
 
         <ul class="navbar-nav" style="margin-right: 15%;">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="" id="dateTimeLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="" id="dateTimeLink" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
                     Dropdown link
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dateTimeLink" id="carInfo">
@@ -51,6 +53,44 @@
     </div>
 </nav>
 <div class="content">
+    <div id="leaveRequest">
+        <h1>Оставьте заявку!</h1>
+        <form>
+            <label>Вы хотите...</label> <br>
+            <div class=" form-check-inline">
+                <input class="form-check-input" type="radio" name="whatYouWant" id="wantToBuy" value="buy" checked>
+                <label class="form-check-label" for="wantToBuy"> Купить </label>
+                <input class="form-check-input" type="radio" name="whatYouWant" id="wantToSell" value="sell">
+                <label class="form-check-label" for="wantToSell"> Продать </label>
+            </div>
+
+            <div class="form-group">
+                <label for="chooseMaterial">Выберите тип вторсырья</label>
+                <select class="form-control" id="chooseMaterial">
+                    <option>Стекло</option>
+                    <option>Пластик</option>
+                    <option>Бумага</option>
+                    <option>Металл</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="choosePrice">Введите стоимость за килограмм</label>
+                <input type="number" class="form-control" id="choosePrice" placeholder="Введите..">
+            </div>
+
+            <label>Выберите способ доставки...</label> <br>
+            <div class=" form-check-inline">
+                <input class="form-check-input" type="radio" name="delivery" id="take" value="take" checked>
+                <label class="form-check-label" for="take">Самовывоз </label>
+                <input class="form-check-input" type="radio" name="delivery" id="deliver" value="deliver" >
+                <label class="form-check-label" for="deliver">Доставка </label>
+            </div>
+            <br>
+            <a href="#" onclick="addUserMarker();">Выберите точку на карте</a>
+
+            <button type="submit" class="btn btn-success">Оставить заявку</button>
+        </form>
+    </div>
     <div id="map"></div>
 </div>
 

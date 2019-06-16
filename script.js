@@ -1,9 +1,13 @@
-let bins = [];
 let icons;
-let sideMenu = document.getElementById('sideMenu');
+let sideMenu = document.getElementById('leaveRequest');
 let dateTime = document.getElementById('dateTimeLink');
-
-
+let addUserMarker;
+let userMarker;
+let containers = [];
+let factories = [];
+let polygons = [];
+let sortingCenters = [];
+let storages = [];
 
 const updateDate = () => {
     let today = new Date();
@@ -25,9 +29,11 @@ DG.then(() => {
 
 
     let map = DG.map('map', {
-        center: [58.52, 31.23],
-        zoom: 10
+        center: [58.530355, 31.240477],
+        zoom: 13
     });
+
+    console.log(map);
 
     let carIcon = DG.icon({
         iconUrl: '/Users/valentina/Documents/hahaton/img/trashCar.png',
@@ -59,6 +65,57 @@ DG.then(() => {
     let carIconGreen = DG.icon({
         iconUrl: '/Users/valentina/Documents/hahaton/img/trashCarGreen.png',
         iconSize: [40, 40]
+    });
+
+    let binGlassIcon = DG.icon({
+        iconUrl: '/Users/valentina/Documents/hahaton/img/binGlass.png',
+        iconSize: [30, 30]
+    });
+
+    let binPlasticIcon = DG.icon({
+        iconUrl: '/Users/valentina/Documents/hahaton/img/binPlastic.png',
+        iconSize: [30, 30]
+    });
+
+    let binMetalIcon = DG.icon({
+        iconUrl: '/Users/valentina/Documents/hahaton/img/binMetal.png',
+        iconSize: [30, 30]
+    });
+
+    let binPaperIcon = DG.icon({
+        iconUrl: '/Users/valentina/Documents/hahaton/img/binPaper.png',
+        iconSize: [30, 30]
+    });
+
+    let binEmptyIcon = DG.icon({
+        iconUrl: '/Users/valentina/Documents/hahaton/img/binEmpty.png',
+        iconSize: [30, 30]
+    });
+
+    let polygonSmall = DG.icon({
+        iconUrl: '/Users/valentina/Documents/hahaton/img/polygonSmall.png',
+        iconSize: [30, 30]
+    });
+
+    let polygonMedium = DG.icon({
+        iconUrl: '/Users/valentina/Documents/hahaton/img/polygonMedium.png',
+        iconSize: [30, 30]
+    });
+
+    let polygonFull = DG.icon({
+        iconUrl: '/Users/valentina/Documents/hahaton/img/polygonFull.png',
+        iconSize: [30, 30]
+    });
+
+
+    let sortingCenterIcon = DG.icon({
+        iconUrl: '/Users/valentina/Documents/hahaton/img/sortingCenter.png',
+        iconSize: [30, 30]
+    });
+
+    let storageIcon = DG.icon({
+        iconUrl: '/Users/valentina/Documents/hahaton/img/storage.png',
+        iconSize: [30, 30]
     });
     // icons = {map, carIcon, carIcon, }
 
@@ -109,40 +166,54 @@ DG.then(() => {
 
     //----------Контейнеры------------
 
-    bins = [
+    // let bins = [
+    //
+    //     // DG.marker([58.525801, 31.270883], {
+    //     //     icon: recycleBinFullIcon
+    //     // }).addTo(map).bindLabel('ПЭТ 1 Новолучанская'),
+    //
+    //     // DG.marker([58.541796, 31.264569], {
+    //     //     icon: recycleBinFullIcon
+    //     // }).addTo(map).bindLabel('ПЭТ 1 ПТК'),
+    //
+    //     DG.marker([58.530355, 31.240477], {
+    //         icon: recycleBinFullIcon
+    //     }).addTo(map).bindLabel('ПЭТ 1 ПТК'),
+    //
+    //     DG.marker([58.508401, 31.231347], {
+    //         icon: recycleBinFullIcon
+    //     }).addTo(map).bindLabel('ПЭТ 1 Псковская'),
+    //
+    //     DG.marker([58.55987, 31.250796], {
+    //         icon: recycleBinFullIcon
+    //     }).addTo(map).bindLabel('"ВторРесурсы" центр приёма макулатуры'),
+    //
+    //     DG.marker([58.555908, 31.271511], {
+    //         icon: recycleBinFullIcon
+    //     }).addTo(map).bindLabel('"Тестовый" центр приёма макулатуры'),
+    //
+    //     DG.marker([58.543089, 31.244903], {
+    //         icon: recycleBinFullIcon
+    //     }).addTo(map).bindLabel('"Тестовый" центр приёма стекла'),
+    //
+    //
+    // ];
 
-        // DG.marker([58.525801, 31.270883], {
-        //     icon: recycleBinFullIcon
-        // }).addTo(map).bindLabel('ПЭТ 1 Новолучанская'),
+    //---------------------------------------
 
-        // DG.marker([58.541796, 31.264569], {
-        //     icon: recycleBinFullIcon
-        // }).addTo(map).bindLabel('ПЭТ 1 ПТК'),
+    //----------Добавление маркера при оформлении заявки------------
 
-        DG.marker([58.530355, 31.240477], {
-            icon: recycleBinFullIcon
-        }).addTo(map).bindLabel('ПЭТ 1 ПТК'),
-
-        DG.marker([58.508401, 31.231347], {
-            icon: recycleBinFullIcon
-        }).addTo(map).bindLabel('ПЭТ 1 Псковская'),
-
-        DG.marker([58.55987, 31.250796], {
-            icon: recycleBinFullIcon
-        }).addTo(map).bindLabel('"ВторРесурсы" центр приёма макулатуры'),
-
-        DG.marker([58.555908, 31.271511], {
-            icon: recycleBinFullIcon
-        }).addTo(map).bindLabel('"Тестовый" центр приёма макулатуры'),
-
-        DG.marker([58.543089, 31.244903], {
-            icon: recycleBinFullIcon
-        }).addTo(map).bindLabel('"Тестовый" центр приёма стекла'),
+    addUserMarker = () => {
+        if (userMarker !== undefined) userMarker.removeFrom(map);
+        userMarker = DG.marker(map.getCenter(), {
+            draggable: true
+        }).addTo(map);
+    };
 
 
-    ];
+    //---------------------------------------
 
-    //-----------------------------
+    //----------Communication with server------------
 
 
     let socket = new WebSocket("ws://10.1.40.210:6060");
@@ -160,9 +231,18 @@ DG.then(() => {
     };
 
     socket.onmessage = event => {
-        console.log("Получены данные " + event.data);
-        console.log( JSON.parse(event.data));
-        // move(car1, JSON.parse(event.data));
+        // console.log("Получены данные " + event.data);
+        let data = JSON.parse(event.data);
+        // console.log(data.type);
+        switch (data.type) {
+            case "cars":
+                move(car1, data.content);
+                break;
+            case "facility":
+                initEnvironment(data.content);
+                break;
+        }
+        
     };
 
     socket.onerror = error => {
@@ -170,27 +250,112 @@ DG.then(() => {
     };
 
 
-    let move = (car, data) => {
-        car.setLatLng([data[0].x, data[0].y]);
+    const move = (car, data) => {
+        car.setLatLng([data.x, data.y]);
 
-        if (data[0].action === "load") {
-            bins.forEach(bin => {
-                if (bin.getLatLng().lat === data[0].x && bin.getLatLng().lng === data[0].y) {
-                    console.log ('lol');
+        if (data.action === "load") {
+            console.log('load');
+            containers.forEach(bin => {
+                if (bin.getLatLng().lat === data.x && bin.getLatLng().lng === data.y) {
                     bin.setIcon(recycleBinEmptyIcon);
                 }
             });
         }
     };
+
+    const initEnvironment = (data) => {
+        data['containers'].map(container => {
+            console.log(container);
+            let iconSrc;
+            let label;
+
+            switch (container.type) {
+                case "glass":
+                    iconSrc = binGlassIcon;
+                    label = "Контейнер для стекла";
+                    break;
+                case "plastic":
+
+                    iconSrc = binPlasticIcon;
+                    label = "Контейнер для пластика";
+                    break;
+                case "metal":
+                    iconSrc = binMetalIcon;
+                    label = "Контейнер для металла";
+                    break;
+                case "paper":
+                    iconSrc = binPaperIcon;
+                    label = "Контейнер для бумаги";
+                    break;
+                default:
+
+                    iconSrc = binEmptyIcon;
+            }
+
+            if (container.state === "empty") {
+                iconSrc = binEmptyIcon;
+            }
+
+            let containerMarker = DG.marker([container.x, container.y], {
+                icon: iconSrc
+            }).addTo(map).bindLabel(label);
+            containers.push(containerMarker);
+        });
+
+        data['polygons'].map(polygon => {
+            let iconSrc;
+            let fullness = polygon.fullness;
+            if (fullness < 20) {
+                iconSrc = polygonSmall
+            } else if (fullness < 60) {
+                iconSrc = polygonMedium;
+            } else {
+                iconSrc = polygonFull;
+            }
+
+            let polygonMarker = DG.marker([polygon.x, polygon.y], {
+                icon: iconSrc
+            }).addTo(map).bindLabel(polygon.name);
+            polygons.push(polygonMarker);
+        });
+
+        data['sort_centers'].map(sortCenter => {
+            let sortCenterMarker = DG.marker([sortCenter.x, sortCenter.y], {
+                icon: sortingCenterIcon
+            }).addTo(map).bindLabel(sortCenter.name);
+            sortingCenters.push(sortCenterMarker);
+        });
+
+        data['storages'].map(storage => {
+            let storageMarker = DG.marker([storage.x, storage.y], {
+                icon: storageIcon
+            }).addTo(map).bindLabel(storage.name);
+            storages.push(storageMarker);
+        });
+
+        data['factories'].map(factory => {
+            let factoryMarker = DG.marker([factory.x, factory.y], {
+                icon: factoryIcon
+            }).addTo(map).bindLabel(factory.name);
+            factories.push(factoryMarker);
+        });
+
+
+    }
 });
 
 
 let showSideMenu = () => {
-    sideMenu.classList.add("open")
+    sideMenu.classList.remove("closed");
+    sideMenu.classList.add("open");
 };
 
 let hideSideMenu = () => {
-    sideMenu.classList.add("closed");
-    sideMenu.classList.remove("open");
+    if (sideMenu.classList.contains("open")) {
+        sideMenu.classList.remove("open");
+        sideMenu.classList.add("closed");
+
+    }
+
 
 };
